@@ -2,6 +2,7 @@ package com.awesomeproject
 
 import android.app.Application
 import com.awesomeproject.fileserver.FileServerPackage
+import com.awesomeproject.httpserver.HttpServerPackage
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactNativeHost
@@ -19,6 +20,7 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> {
             val packages = PackageList(this).packages
             packages.add(FileServerPackage())
+            packages.add(HttpServerPackage())
             return packages
         }
 

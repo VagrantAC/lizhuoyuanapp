@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {WebView} from 'react-native-webview';
 import {StyleSheet} from 'react-native';
-import {ToastExample} from './Toast/toast';
+import {HttpServer, ToastExample} from './Toast/toast';
 
 class App extends Component {
   constructor(props) {
@@ -13,6 +13,8 @@ class App extends Component {
 
   componentDidMount() {
     ToastExample.reset().then(port => this.setState({port}));
+    console.log("log HttpServer", HttpServer)
+    HttpServer.reset();
   }
 
   render() {
