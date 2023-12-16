@@ -71,6 +71,7 @@ apply plugin: "kotlin-android"
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
 apply plugin: 'kotlinx-serialization'
+apply plugin: 'com.google.devtools.ksp'
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -160,7 +161,11 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    implementation('org.greenrobot:greendao:3.3.0')
+//    implementation('org.greenrobot:greendao:3.3.0')
+
+    implementation("androidx.room:room-runtime:2.5.0")
+    annotationProcessor("androidx.room:room-compiler:2.5.0")
+    ksp("androidx.room:room-compiler:2.5.0")
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

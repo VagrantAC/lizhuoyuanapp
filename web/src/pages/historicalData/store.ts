@@ -11,16 +11,25 @@ export class HistoricalDataStore implements IHistoricalDataStore {
 
   @observable checkedDataId: number = 0;
 
+  getImageKeyTimeout: number = 0;
+
   constructor(rootStore: IRootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    setInterval(() => {
-      this.getImageKeys();
-    }, 2000);
+    this.getImageKeys();
   }
 
   getImageKeys = async () => {
-    const keys = await localServiceClient.getKeys();
+    clearTimeout(this.getImageKeyTimeout);
+    let keys: number[] = [];
+    try {
+      keys = await localServiceClient.getKeys();
+    } catch {
+      this.getImageKeyTimeout = setTimeout(() => {
+        this.getImageKeys()
+      }, 3000)
+      return;
+    }
     const historicalDatas: IHistoricalData[] = [];
     (await Promise.all(keys.map(async (key) => {
       try {
@@ -28,7 +37,7 @@ export class HistoricalDataStore implements IHistoricalDataStore {
         const res: IHistoricalData = JSON.parse(info);
         res.key = key;
         historicalDatas.push((res))
-      }catch (e) {
+      } catch (e) {
         console.error(e)
       }
     })))
@@ -47,4 +56,13 @@ export class HistoricalDataStore implements IHistoricalDataStore {
   getCheckedData = () => {
     return this.historicalDatas[this.checkedDataId];
   };
+
+  deleteById = async (id: number) => {
+    try {
+      await localServiceClient.delete(id)
+      await this.getImageKeys()
+    } catch (e) {
+      console.error(e)
+    }
+  }
 }

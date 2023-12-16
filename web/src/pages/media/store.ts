@@ -42,6 +42,7 @@ export class MediaPageStore implements IMediaPageStore {
       message.info('保存成功');
       this.savingState = ISavingState.Saved;
       const {pageControllerStore} = this.rootStore.stores;
+      this.rootStore.getStores().historicalDataStore.getImageKeys();
       pageControllerStore.setCheckedPage(IPagesKey.HistoricalData);
     } catch (e) {
       message.info( '保存失败，请前往设置页面确定当前APP是否有存储权限');

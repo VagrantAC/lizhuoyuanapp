@@ -25,7 +25,7 @@ export class LocalServiceClient {
     }>(`${HTTP_SERVER}/?id=${id}`);
   };
 
-  delete = async (id: string) => {
+  delete = async (id: number) => {
     await axios.delete(`${HTTP_SERVER}/?id=${id}`)
   };
 

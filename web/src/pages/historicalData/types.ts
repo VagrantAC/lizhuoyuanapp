@@ -7,6 +7,7 @@ export interface IHistoricalDataStore {
   getCheckedData: () => IHistoricalData;
   getImageKeys: () => void;
   setCheckedDataId: (id: number) => void;
+  deleteById: (id: number) => void;
 }
 
 export interface IHistoricalData {

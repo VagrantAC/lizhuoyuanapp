@@ -4,6 +4,7 @@ import {inject, observer} from 'mobx-react';
 import type {IHistoricalDataPage} from './types';
 import type {IStores} from '../../stores/types';
 import {Card, Image, List} from "antd";
+import {DeleteFilled} from "@ant-design/icons";
 
 @inject(({historicalDataStore}: IStores) => ({historicalDataStore}))
 @observer
@@ -36,24 +37,37 @@ export class HistoricalDataPage extends Component<IHistoricalDataPage> {
             >
                 <List
                     dataSource={historicalDataStore?.historicalDatas}
-                    renderItem={({timestamp, rgbBase64}, id) => {
+                    renderItem={({timestamp, rgbBase64, key}, id) => {
                         const date = new Date(Number(timestamp));
                         return (
-                            <List.Item
-                                key={timestamp}
-                               onClick={() => {
-                                   historicalDataStore!.setCheckedDataId(id);
-                               }}
-                            >
-                                <Card title={`${date.toLocaleString()} 实验`} style={{
-                                    height: '14rem',
-                                    width: '100%',
-                                }} bodyStyle={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                }}>
+                            <List.Item key={timestamp}>
+                                <Card title={
+                                    <div>
+                                        {date.toLocaleString()} 实验
+                                        <DeleteFilled
+                                            onClick={() => historicalDataStore?.deleteById(key)}
+                                            style={{
+                                                position: 'absolute',
+                                                right: '1rem',
+                                                fontSize: '1.4rem',
+                                                color: '#f00'
+                                            }}
+                                        />
+                                    </div>}
+                                      bodyStyle={{
+                                          display: 'flex',
+                                          flexDirection: 'column',
+                                          alignItems: 'center',
+                                      }}
+                                      style={{
+                                          height: '14rem',
+                                          width: '100%',
+                                      }}
+                                >
                                     <Image
+                                        onClick={() => {
+                                            historicalDataStore!.setCheckedDataId(id);
+                                        }}
                                         width="8rem"
                                         height="8rem"
                                         src={rgbBase64}
