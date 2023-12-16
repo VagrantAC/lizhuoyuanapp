@@ -1,8 +1,9 @@
 import {inject, observer} from 'mobx-react';
 import {Component, ReactNode} from 'react';
 import {IMediaPage, ISavingState} from './types';
-import {STYLES} from './configs';
 import {IStores} from '../../stores/types';
+import {Image} from "antd-mobile";
+import {CheckOutlined, CloseOutlined, DownloadOutlined} from "@ant-design/icons";
 
 @inject(({mediaPageStore}: IStores) => ({mediaPageStore}))
 @observer
@@ -15,53 +16,55 @@ export class MediaPage extends Component<IMediaPage> {
   render(): ReactNode {
     const {mediaPageStore} = this.props;
     return (
-      <View
-        style={[
-          STYLES.container,
-          {opacity: mediaPageStore?.hasMediaLoaded ? 1 : 0},
-        ]}>
-        <Image
-          source={{
-            uri: `file://${mediaPageStore?.imagePath}`,
-          }}
-          style={StyleSheet.absoluteFill}
-          resizeMode="cover"
-          onLoadEnd={() => mediaPageStore?.setHasMediaLoaded(true)}
+      <div>
+        <Image  src={mediaPageStore?.image} alt="Base64 Image"/>
+        {mediaPageStore?.savingState === ISavingState.None && (
+          <DownloadOutlined
+              onClick={() => mediaPageStore?.savingImage()}
+              style={{
+                  fontSize: '2.5rem',
+                  color: '#0f0',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  border: 'none',
+                  position: 'absolute',
+                  alignItems: 'center',
+                  bottom: '15%',
+                  left: '5%',
+              }}
+          />
+        )}
+        {mediaPageStore?.savingState === ISavingState.Saved && (
+          <CheckOutlined
+              style={{
+                  fontSize: '2.5rem',
+                  color: '#0f0',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  border: 'none',
+                  position: 'absolute',
+                  alignItems: 'center',
+                  bottom: '15%',
+                  left: '5%',
+              }}
+          />
+        )}
+        <CloseOutlined
+            onClick={() => mediaPageStore?.closeImage()}
+            disabled={mediaPageStore?.savingState !== ISavingState.None}
+            style={{
+                fontSize: '2.5rem',
+                color: '#f00',
+                display: 'flex',
+                justifyContent: 'center',
+                border: 'none',
+                position: 'absolute',
+                alignItems: 'center',
+                top: '5%',
+                right: '5%',
+            }}
         />
-
-        <PressableOpacity
-          style={STYLES.saveButton}
-          onPress={() => {
-            mediaPageStore?.savingImage();
-          }}
-          disabled={mediaPageStore?.savingState !== ISavingState.None}>
-          {mediaPageStore?.savingState === ISavingState.None && (
-            <Center>
-              <Ionicons name="download" size={40} />
-            </Center>
-          )}
-          {mediaPageStore?.savingState === ISavingState.Saved && (
-            <Center>
-              <Ionicons name="checkmark" size={40} />
-            </Center>
-          )}
-          {mediaPageStore?.savingState === ISavingState.Saving && (
-            <ActivityIndicator color="white" />
-          )}
-        </PressableOpacity>
-
-        <PressableOpacity
-          style={STYLES.closeButton}
-          onPress={() => {
-            mediaPageStore?.closeImage();
-          }}
-          disabled={mediaPageStore?.savingState !== ISavingState.None}>
-          <Center>
-            <Ionicons name="close" size={40} color="#000" />
-          </Center>
-        </PressableOpacity>
-        <StatusBarBlurBackground />
-      </View>
+      </div>
     );
   }
 }

@@ -1,9 +1,9 @@
 import {Component, ReactNode} from 'react';
 
 import {inject, observer} from 'mobx-react';
-
 import type {IHistoricalDataPage} from './types';
 import type {IStores} from '../../stores/types';
+import {Card, Image, List} from "antd";
 
 @inject(({historicalDataStore}: IStores) => ({historicalDataStore}))
 @observer
@@ -15,47 +15,57 @@ export class HistoricalDataPage extends Component<IHistoricalDataPage> {
       historicalDataStore?.historicalDatas?.length,
     );
     return (
-      <Box alignSelf="center">
-        <VStack space={4} alignItems="center" paddingTop="2%">
-          <Center w="80" h="20" rounded="md">
-            <Text fontSize="xl">实验数据</Text>
-          </Center>
-          <ScrollView w="100%">
-            {historicalDataStore?.historicalDatas?.map(
-              ({key, timestamp, rgbBase64}, id) => {
-                const date = new Date(Number(timestamp));
-                return (
-                  <Box
-                    bg="#E1E4E7"
-                    p="4"
-                    shadow={2}
-                    key={key}
-                    borderRadius="4"
-                    rounded="xl"
-                    marginBottom="5%"
-                    flexDirection="row"
-                    onTouchStart={() => {
-                      historicalDataStore.setCheckedDataId(id);
+        <div>
+            <div style={{
+                paddingTop: '3rem',
+                paddingBottom: '1rem',
+                display: 'flex',
+                justifyContent: 'center',
+                fontSize: '1.2rem',
+            }}>
+                实验数据
+            </div>
+            <div
+                id="scrollableDiv"
+                style={{
+                    height: 750,
+                    overflow: 'auto',
+                    padding: '0 16px',
+                    border: '1px solid rgba(140, 140, 140, 0.35)',
+                }}
+            >
+                <List
+                    dataSource={historicalDataStore?.historicalDatas}
+                    renderItem={({timestamp, rgbBase64}, id) => {
+                        const date = new Date(Number(timestamp));
+                        return (
+                            <List.Item
+                                key={timestamp}
+                               onClick={() => {
+                                   historicalDataStore!.setCheckedDataId(id);
+                               }}
+                            >
+                                <Card title={`${date.toLocaleString()} 实验`} style={{
+                                    height: '14rem',
+                                    width: '100%',
+                                }} bodyStyle={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                }}>
+                                    <Image
+                                        width="8rem"
+                                        height="8rem"
+                                        src={rgbBase64}
+                                        alt="Picture of a Flower"
+                                    />
+                                </Card>
+                            </List.Item>
+                        )
                     }}
-                    w="100%">
-                    <AspectRatio h="40" w="45%">
-                      <Image
-                        resizeMode="cover"
-                        src={`data:image/png;base64, ${rgbBase64}`}
-                        alt="Picture of a Flower"
-                      />
-                    </AspectRatio>
-                    <Stack space={2} w="40%" marginLeft="5%">
-                      <Text fontSize="16">实验时间</Text>
-                      <Text fontSize="16">{date.toLocaleString()}</Text>
-                    </Stack>
-                  </Box>
-                );
-              },
-            )}
-          </ScrollView>
-        </VStack>
-      </Box>
+                />
+            </div>
+        </div>
     );
   }
 }

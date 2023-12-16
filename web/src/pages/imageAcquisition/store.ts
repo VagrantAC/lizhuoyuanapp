@@ -16,6 +16,9 @@ export class ImageAcquisitionStore implements IImageAcquisitionStore {
 
     takePhoto() {
         const photo = this.ref?.current?.takePhoto();
-        console.log(photo);
+        if (photo) {
+            const {mediaPageStore} = this.rootStore.getStores();
+            mediaPageStore.setImage(photo);
+        }
     }
 }

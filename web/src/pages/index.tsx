@@ -44,29 +44,30 @@ export class PageController extends Component<IPageController> {
           {pageControllerStore?.checkedPage === IPagesKey.Mine ? (
             <MinePage />
           ) : null}
-          {/*{pageControllerStore?.checkedPage === IPagesKey.HistoricalData ? (*/}
-          {/*  <HistoricalDataPage />*/}
-          {/*) : null}*/}
-          {/*{pageControllerStore?.checkedPage === IPagesKey.Media ? (*/}
-          {/*  <MediaPage />*/}
-          {/*) : null}*/}
+          {pageControllerStore?.checkedPage === IPagesKey.HistoricalData ? (
+            <HistoricalDataPage />
+          ) : null}
+          {pageControllerStore?.checkedPage === IPagesKey.Media ? (
+            <MediaPage />
+          ) : null}
           {pageControllerStore?.checkedPage === IPagesKey.TestCard ? (
             <TestCardPage />
           ) : null}
         </div>
-          <TabBar style={{
-              position: 'absolute',
-              bottom: '1rem',
-              width: '100%'
-          }}
-          onChange={(key) => {
-              pageControllerStore?.setCheckedPage(tabBars[Number(key)].key);
-          }}>
+          <TabBar
+              style={{
+                  position: 'absolute',
+                  bottom: '1rem',
+                  width: '100%'
+              }}
+              activeKey={pageControllerStore?.checkedPage.toString()}
+              onChange={(key) => pageControllerStore?.setCheckedPage(tabBars[Number(key)].key)}
+          >
             {tabBars.map(({key, desc, icon}) => {
               return <TabBar.Item key={key} icon={icon} title={desc} />;
             })}
           </TabBar>
-          </>
+      </>
     );
   }
 }

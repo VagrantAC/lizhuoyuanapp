@@ -1,4 +1,4 @@
-import type {IRootStore} from '../../../old_app/stores/types';
+import {IRootStore} from "../../stores/types.ts";
 
 export interface IMinePageStore {
   rootStore: IRootStore;

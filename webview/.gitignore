@@ -158,4 +158,7 @@ package-lock.json
 
 /android/app/build/
 
+/android/opencv/build/
+/android/opencv/.cxx/
+
 /android/app/src/main/assets/

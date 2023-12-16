@@ -1,5 +1,5 @@
-import type {IRootStore} from '../../../old_app/stores/types';
 import type {IMinePageStore} from './types';
+import type {IRootStore} from "../../stores/types.ts";
 
 export class MinePageStore implements IMinePageStore {
   rootStore: IRootStore;

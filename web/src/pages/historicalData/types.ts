@@ -10,8 +10,8 @@ export interface IHistoricalDataStore {
 }
 
 export interface IHistoricalData {
-  key: string;
-  timestamp: string;
+  key: number;
+  timestamp: number;
   rgbBase64: string;
   hsvBase64: string;
 }

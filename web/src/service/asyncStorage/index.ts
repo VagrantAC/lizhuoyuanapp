@@ -1,43 +1,37 @@
 import axios from "axios";
-
-
-export class AsyncStorageClient {
+// const HTTP_SERVER = "http://localhost:7890"
+const HTTP_SERVER = "http://192.168.2.140:7890"
+export class LocalServiceClient {
   post = async (info: string) => {
-    try {
-      await axios.post<string>(`http://localhost:7890/`, info);
-    } catch (e) {
-      console.error(e)
-    }
+    await axios.post<string>(`${HTTP_SERVER}/`, info);
   };
 
   getKeys = async () => {
-    try {
-      const res = await axios.post<void, {tests: {
-          id: string,
-        }[]}>(`http://localhost:7890/keys`);
-      return res.tests.map(({id}) => id)
-    } catch (e) {
-      console.error(e)
-    }
-    return []
+    const res = await axios.get<void, {
+      data: {
+        tests: {
+          id: number,
+        }[]
+      }}>(`${HTTP_SERVER}/keys`);
+    return res.data.tests.map(({id}) => id)
   };
 
-  get = async (id: string) => {
-    try {
-      return await axios.get<string, string>(`http://localhost:7890/?id=${id}`);
-    } catch (e) {
-      console.error(e);
-    }
-    return null;
+  get = async (id: number) => {
+    return await axios.get<string, {
+      data: {
+        id: number,
+        info: string,
+      }
+    }>(`${HTTP_SERVER}/?id=${id}`);
   };
 
   delete = async (id: string) => {
-    try {
-      await axios.delete(`http://localhost:7890/?id=${id}`)
-    } catch (e) {
-      console.error(e);
-    }
+    await axios.delete(`${HTTP_SERVER}/?id=${id}`)
   };
+
+  rgb2hsv = async (image: string) => {
+    return await axios.post(`${HTTP_SERVER}/rgb2hsv`, image)
+  }
 }
 
-export const asyncStorageClient = new AsyncStorageClient();
+export const localServiceClient = new LocalServiceClient();

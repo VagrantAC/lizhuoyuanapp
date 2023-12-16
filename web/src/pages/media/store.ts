@@ -1,9 +1,9 @@
 import {makeAutoObservable, observable} from 'mobx';
-import {asyncStorageClient} from '../../service/asyncStorage';
 import {IRootStore} from '../../stores/types';
 import {IPagesKey} from '../types';
 import {IMediaPageStore, ISavingState} from './types';
 import {message} from "antd";
+import {localServiceClient} from "../../service/asyncStorage";
 
 export class MediaPageStore implements IMediaPageStore {
   rootStore: IRootStore;
@@ -17,23 +17,28 @@ export class MediaPageStore implements IMediaPageStore {
 
   @observable savingState: ISavingState = ISavingState.None;
 
-  @observable imagePath: string = '';
+  @observable image: string = '';
 
   setHasMediaLoaded = (value: boolean) => {
     this.hasMediaLoaded = value;
   };
 
-  setImagePath = (path: string) => {
+  setImage = (image: string) => {
     this.savingState = ISavingState.None;
-    this.imagePath = path;
+    this.image = image;
     const {pageControllerStore} = this.rootStore.stores;
     pageControllerStore.setCheckedPage(IPagesKey.Media);
   };
 
   savingImage = async () => {
-    this.savingState = ISavingState.Saving;
     try {
-      await asyncStorageClient.storeImage(Date.now(), this.imagePath);
+      const hsvImage = (await localServiceClient.rgb2hsv(this.image.replace("data:image/jpeg;base64,",""))).data;
+      console.log("log hsv:", hsvImage)
+      await localServiceClient.post(JSON.stringify( {
+        rgbBase64: this.image,
+        timestamp: Date.now(),
+        hsvBase64: `data:image/jpeg;base64,${hsvImage}`,
+      }));
       message.info('保存成功');
       this.savingState = ISavingState.Saved;
       const {pageControllerStore} = this.rootStore.stores;

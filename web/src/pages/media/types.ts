@@ -1,4 +1,4 @@
-import {IRootStore} from '../../../old_app/stores/types';
+import {IRootStore} from "../../stores/types.ts";
 
 export interface IMediaPage {
   mediaPageStore?: IMediaPageStore;
@@ -14,9 +14,9 @@ export interface IMediaPageStore {
   rootStore: IRootStore;
   hasMediaLoaded: boolean;
   savingState: ISavingState;
-  imagePath: string;
+  image: string;
 
-  setImagePath: (path: string) => void;
+  setImage: (image: string) => void;
   setHasMediaLoaded: (value: boolean) => void;
   savingImage: () => void;
   closeImage: () => void;
