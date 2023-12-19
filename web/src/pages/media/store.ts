@@ -32,12 +32,14 @@ export class MediaPageStore implements IMediaPageStore {
 
   savingImage = async () => {
     try {
-      const hsvImage = (await localServiceClient.rgb2hsv(this.image.replace("data:image/jpeg;base64,",""))).data;
-      console.log("log hsv:", hsvImage)
+      const rgbBase64 = this.image.replace("data:image/jpeg;base64,","");
+      const hsvImage = (await localServiceClient.rgb2hsv(rgbBase64)).data;
+      const avgRgbColor = (await localServiceClient.average(rgbBase64)).data
       await localServiceClient.post(JSON.stringify( {
         rgbBase64: this.image,
         timestamp: Date.now(),
         hsvBase64: `data:image/jpeg;base64,${hsvImage}`,
+        avgRgbColor,
       }));
       message.info('保存成功');
       this.savingState = ISavingState.Saved;

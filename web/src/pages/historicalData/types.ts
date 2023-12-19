@@ -15,6 +15,11 @@ export interface IHistoricalData {
   timestamp: number;
   rgbBase64: string;
   hsvBase64: string;
+  avgRgbColor: {
+    r: number,
+    g: number,
+    b: number,
+  }
 }
 
 export interface IHistoricalDataPage {

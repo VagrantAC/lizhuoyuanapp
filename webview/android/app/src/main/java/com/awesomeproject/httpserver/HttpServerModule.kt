@@ -15,6 +15,8 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import org.opencv.android.OpenCVLoader
+import org.opencv.core.Core
+import org.opencv.core.CvType.CV_32F
 import org.opencv.core.CvType.CV_8UC3
 import org.opencv.core.Mat
 import org.opencv.core.MatOfByte
@@ -27,6 +29,9 @@ import java.util.*
 data class DTest(val id: Long, val info: String)
 @Serializable
 data class TestList(val tests: MutableList<DTest>)
+
+@Serializable
+data class Color(val r: Double, var g: Double, var b: Double);
 
 
 class HttpServerModule(private var reactContext: ReactApplicationContext): ReactContextBaseJavaModule(reactContext) {
@@ -134,6 +139,35 @@ class HttpServerModule(private var reactContext: ReactApplicationContext): React
                     } catch (e: Exception) {
                         Log.e("ERROR", e.message!!)
                     }
+                }
+                post("/average") {
+                    try {
+                        val base64Image = call.receiveText()
+                        val imageData = Base64.getDecoder().decode(base64Image);
+
+                        // 读取图像数据为 OpenCV 的 Mat 对象
+                        val imageMat =
+                            Imgcodecs.imdecode(MatOfByte(*imageData), Imgcodecs.IMREAD_UNCHANGED)
+                        // 将图像转换为 32-bit floating point 格式
+                        val floatImage = Mat()
+                        imageMat.convertTo(floatImage, CV_32F)
+
+                        // 拆分图像通道
+                        val channels = ArrayList<Mat>()
+                        Core.split(floatImage, channels)
+
+                        // 计算每个通道的平均值
+                        val meanValues = DoubleArray(3)
+                        for (i in 0 until 3) {
+                            val meanValue = Core.mean(channels[i])
+                            meanValues[i] = meanValue.`val`[0]
+                        }
+                        Log.i("IMAGE AVERAGE:", Color(meanValues[0], meanValues[1], meanValues[2]).toString())
+                        call.respond(Color(meanValues[0], meanValues[1], meanValues[2]))
+                    } catch(e: Exception) {
+                        Log.e("ERROR", e.message!!)
+                    }
+
                 }
             }
         }.start(wait = false)

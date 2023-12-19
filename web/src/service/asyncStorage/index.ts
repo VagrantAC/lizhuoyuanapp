@@ -1,6 +1,6 @@
 import axios from "axios";
-// const HTTP_SERVER = "http://localhost:7890"
-const HTTP_SERVER = "http://192.168.2.140:7890"
+const HTTP_SERVER = "http://localhost:7890"
+// const HTTP_SERVER = "http://192.168.2.140:7890"
 export class LocalServiceClient {
   post = async (info: string) => {
     await axios.post<string>(`${HTTP_SERVER}/`, info);
@@ -31,6 +31,10 @@ export class LocalServiceClient {
 
   rgb2hsv = async (image: string) => {
     return await axios.post(`${HTTP_SERVER}/rgb2hsv`, image)
+  }
+
+  average = async (image: string) => {
+    return await axios.post(`${HTTP_SERVER}/average`, image)
   }
 }
 

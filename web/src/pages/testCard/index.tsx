@@ -4,6 +4,7 @@ import {ITestCardPage} from './types';
 import {IStores} from "../../stores/types.ts";
 import {StepBackwardOutlined, StepForwardOutlined} from "@ant-design/icons";
 import {Image} from "antd-mobile";
+import {getColor, getGray, rgbToHsv} from "./utils.ts";
 
 @inject(({historicalDataStore}: IStores) => ({historicalDataStore}))
 @observer
@@ -11,6 +12,9 @@ export class TestCardPage extends Component<ITestCardPage> {
   render(): ReactNode {
     const {historicalDataStore} = this.props;
     const checkedData = historicalDataStore?.getCheckedData();
+    const color = getColor(checkedData?.avgRgbColor?.r, checkedData?.avgRgbColor?.g, checkedData?.avgRgbColor?.b);
+    const hsv = rgbToHsv(checkedData?.avgRgbColor?.r, checkedData?.avgRgbColor?.g, checkedData?.avgRgbColor?.b);
+    const gray = getGray(checkedData?.avgRgbColor?.r, checkedData?.avgRgbColor?.g, checkedData?.avgRgbColor?.b);
     return (
         <div>
             <div style={{
@@ -40,28 +44,49 @@ export class TestCardPage extends Component<ITestCardPage> {
                 </div>
             </div>
             <div style={{
-                padding: '0.5rem',
+                paddingLeft: '0.5rem',
                 fontSize: '1rem',
             }}>原照片
             </div>
             <div style={{
                 display: 'flex',
                 justifyContent: 'center',
-                padding: '1rem',
+                padding: '0.5rem',
             }}>
                 <Image src={checkedData?.rgbBase64} height="40%" width="40%"/>
             </div>
             <div style={{
-                padding: '0.5rem',
+                display: 'flex',
+                justifyContent: 'center',
+            }}>
+                <div style={{
+                    width: '40%',
+                    height: '1rem',
+                    backgroundColor: color,
+                }}/>
+            </div>
+            <div style={{
+                paddingLeft: '0.5rem',
                 fontSize: '1rem',
             }}>灰度照片
             </div>
             <div style={{
                 display: 'flex',
                 justifyContent: 'center',
-                padding: '1rem',
+                padding: '0.5rem',
             }}>
                 <Image src={checkedData?.hsvBase64} height="40%" width="40%"/>
+            </div>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                fontSize: '1rem',
+            }}>
+                {`H: ${hsv.h.toFixed(1)}, `}
+                {`S: ${hsv.s.toFixed(4)}, `}
+                {`V: ${hsv.v.toFixed(4)}.`}
+                <br/>
+                {`灰度值: ${gray.toFixed(6)}`}
             </div>
         </div>
     )
